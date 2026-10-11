@@ -49,6 +49,7 @@ sin backend, sin cuentas y sin subir nada a un servidor.
 - 🎙️ **Grabar y reproducir la reversa** directamente en el navegador.
 - 🔢 **Número de escuchas configurable** (1–10) antes de obligar a grabar la imitación.
 - 🔊 **Reproducción del resultado final** (imitación invertida) y comparación con el original.
+- 💾 **Exportar/compartir el clip final** en WAV (compartir nativo en móvil, descarga en escritorio).
 - 📊 **Estadísticas opcionales** de aciertos/fallos con historial, guardadas en el dispositivo.
 - 🔁 **Rondas ilimitadas** sin perder el marcador.
 - 📲 **PWA instalable** con botón de instalación inteligente (prompt nativo o guía en iOS).
@@ -150,10 +151,12 @@ src/
 │   ├── config.ts             # nº de escuchas y nombres (localStorage)
 │   ├── game.ts               # máquina de estados del juego
 │   └── stats.ts              # estadísticas aciertos/fallos (localStorage)
-└── components/
+├── components/
     ├── AudioLevel.vue
     ├── InstallPwaButton.vue
     └── screens/              # una pantalla por fase del juego
+└── utils/
+    └── audioExport.ts        # encoder WAV + compartir/descargar el clip final
 scripts/
 └── gen-icons.mjs             # genera los PNG de la PWA desde favicon.svg
 tests/
@@ -176,8 +179,8 @@ tests/
 - [x] PWA instalable + botón de instalación
 - [x] Estadísticas en `localStorage`
 - [x] Tests (Vitest + Playwright) y CI/CD en GitHub Pages
+- [x] Exportar/compartir el clip final (WAV)
 - [ ] Multijugador **online** en tiempo real (varios dispositivos)
-- [ ] Exportar/compartir el clip final
 
 ## 📄 Licencia
 

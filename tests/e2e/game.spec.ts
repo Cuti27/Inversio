@@ -8,7 +8,13 @@ test.describe('Inversio', () => {
     await expect(page.getByRole('button', { name: 'Empezar partida' })).toBeVisible();
   });
 
-  test('completa una ronda con micrófono simulado', async ({ page }) => {
+  test('completa una ronda, exporta el clip y registra el acierto', async ({ page }) => {
+    // En headless no hay Web Share API: forzamos la ruta de descarga.
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+      Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
+    });
+
     await page.goto('/');
 
     // Configuración → empezar partida
@@ -57,10 +63,17 @@ test.describe('Inversio', () => {
     ).toBeVisible();
     await page.getByRole('button', { name: '¡Acertó!' }).click();
 
-    // Resultado + estadísticas
+    // Resultado + exportación del clip final
     await expect(page.getByRole('heading', { name: '¡Acierto!' })).toBeVisible();
-    await page.getByRole('button', { name: 'Estadísticas' }).click();
 
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Descargar el clip' }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^inversio-\d{8}-\d{6}\.wav$/);
+    await expect(page.getByText('Clip descargado ✅')).toBeVisible();
+
+    // Estadísticas
+    await page.getByRole('button', { name: 'Estadísticas' }).click();
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByText('Historial reciente')).toBeVisible();
     await expect(dialog.getByText('Aciertos')).toBeVisible();

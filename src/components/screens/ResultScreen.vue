@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useAudioEngine } from '../../composables/useAudioEngine';
 import { useGameStore } from '../../stores/game';
 import { useStatsStore } from '../../stores/stats';
+import {
+  audioBufferToWav,
+  buildClipFilename,
+  shareOrDownload,
+  supportsFileShare,
+} from '../../utils/audioExport';
 
 const game = useGameStore();
 const stats = useStatsStore();
@@ -18,12 +24,42 @@ const accuracyPercent = computed<number>(() => Math.round(stats.accuracy * 100))
 
 const hasFinal = computed<boolean>(() => game.imitationReversed !== null);
 
+/** En móvil podemos compartir el archivo directamente; en escritorio, descargar. */
+const canShare = supportsFileShare();
+const exportOutcome = ref<'shared' | 'downloaded' | 'error' | null>(null);
+
 function playFinal(): void {
   const buffer = game.imitationReversed;
   if (buffer) {
     play(buffer);
   }
 }
+
+async function exportClip(): Promise<void> {
+  const buffer = game.imitationReversed;
+  if (!buffer) {
+    return;
+  }
+  try {
+    const blob = audioBufferToWav(buffer);
+    exportOutcome.value = await shareOrDownload(blob, buildClipFilename());
+  } catch {
+    exportOutcome.value = 'error';
+  }
+}
+
+const exportMessage = computed<string>(() => {
+  switch (exportOutcome.value) {
+    case 'shared':
+      return 'Clip compartido ✅';
+    case 'downloaded':
+      return 'Clip descargado ✅';
+    case 'error':
+      return 'No se pudo exportar el clip.';
+    default:
+      return '';
+  }
+});
 </script>
 
 <template>
@@ -65,6 +101,24 @@ function playFinal(): void {
       >
         {{ isPlaying ? 'Reproduciendo…' : 'Reproducir el resultado de nuevo' }}
       </button>
+
+      <button
+        class="btn btn-primary"
+        type="button"
+        :disabled="!hasFinal"
+        @click="exportClip"
+      >
+        {{ canShare ? 'Compartir el clip' : 'Descargar el clip' }}
+      </button>
+
+      <p
+        v-if="exportOutcome"
+        class="export-note muted text-center"
+        role="status"
+        aria-live="polite"
+      >
+        {{ exportMessage }}
+      </p>
     </section>
 
     <div class="spacer" />
@@ -89,6 +143,11 @@ function playFinal(): void {
 }
 .miss {
   color: var(--danger);
+}
+
+.export-note {
+  margin: 0;
+  font-size: 0.85rem;
 }
 
 .score {
