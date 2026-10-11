@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <title>Inversio — Reverse Audio</title>
+  <desc>Minimalist purple audio waveform surrounded by a counterclockwise rewind arrow on a premium dark background.</desc>
+
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1b1b2e"/>
+      <stop offset="1" stop-color="#0f0f1a"/>
+    </linearGradient>
+
+    <linearGradient id="iconGradient" x1="150" y1="130" x2="370" y2="370" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="0.48" stop-color="#ececf5"/>
+      <stop offset="1" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App icon background -->
+  <rect
+    x="1"
+    y="1"
+    width="510"
+    height="510"
+    rx="110"
+    fill="url(#backgroundGradient)"
+    stroke="#34345a"
+    stroke-width="2"
+  />
+
+  <!-- Counterclockwise rewind loop -->
+  <g id="reverse-audio" stroke="url(#iconGradient)" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M349 190
+         A116 116 0 1 0 349 322"
+      stroke-width="10"
+    />
+
+    <!-- Directional arrowhead -->
+    <path
+      d="M364 304
+         L336 309
+         L357 334
+         Z"
+      fill="url(#iconGradient)"
+      stroke="none"
+    />
+  </g>
+
+  <!-- Central audio frequency waveform -->
+  <g id="audio-waveform" fill="url(#iconGradient)">
+    <rect x="191" y="238" width="14" height="36" rx="7"/>
+    <rect x="220" y="227" width="14" height="58" rx="7"/>
+    <rect x="249" y="215" width="14" height="82" rx="7"/>
+    <rect x="278" y="227" width="14" height="58" rx="7"/>
+    <rect x="307" y="238" width="14" height="36" rx="7"/>
+  </g>
+</svg>
