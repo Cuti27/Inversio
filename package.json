@@ -3,24 +3,32 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@11.1.2",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "icons": "node scripts/gen-icons.mjs"
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "pnpm run test:unit && pnpm run test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "pinia": "^4.0.3",
     "vue": "^3.5.42"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/node": "^24.13.3",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
+    "jsdom": "^30.1.2",
     "sharp": "^0.35.5",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.3",
     "vue-tsc": "^3.3.11"
   }
 }

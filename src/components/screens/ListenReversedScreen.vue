@@ -71,7 +71,12 @@ function goToImitation(): void {
         Grabar mi imitación
       </button>
 
-      <button class="btn btn-ghost" type="button" @click="goToImitation">
+      <button
+        v-else
+        class="btn btn-ghost"
+        type="button"
+        @click="goToImitation"
+      >
         Ya lo tengo, grabar
       </button>
     </section>

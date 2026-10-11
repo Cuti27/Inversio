@@ -9,6 +9,7 @@
     <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite"></a>
     <a href="https://pinia.vuejs.org/"><img src="https://img.shields.io/badge/Pinia-4-ffd859?logo=pinia&logoColor=black" alt="Pinia"></a>
     <a href="https://vite-pwa-org.netlify.app/"><img src="https://img.shields.io/badge/PWA-instalable-5a0fc8?logo=pwa&logoColor=white" alt="PWA"></a>
+    <a href="https://github.com/Cuti27/Inversio/actions/workflows/ci.yml"><img src="https://github.com/Cuti27/Inversio/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
   </p>
 </div>
@@ -67,7 +68,7 @@ sin backend, sin cuentas y sin subir nada a un servidor.
 
 ## 🚀 Empezar
 
-**Requisitos:** Node.js 18+ y un navegador con Web Audio API y MediaRecorder.
+**Requisitos:** Node.js 20+ y **pnpm**. Un navegador con Web Audio API y MediaRecorder.
 
 ```bash
 # 1. Clonar
@@ -75,20 +76,48 @@ git clone https://github.com/Cuti27/Inversio.git
 cd Inversio
 
 # 2. Instalar dependencias
-npm install
+pnpm install
 
 # 3. Desarrollo
-npm run dev
+pnpm dev
 ```
 
 ### Comandos disponibles
 
 | Comando | Descripción |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción (type-check + PWA) |
-| `npm run preview` | Previsualiza el build (ideal para probar la PWA) |
-| `npm run icons` | Regenera los iconos PWA desde `public/favicon.svg` |
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | Build de producción (type-check + PWA) |
+| `pnpm preview` | Previsualiza el build (ideal para probar la PWA) |
+| `pnpm icons` | Regenera los iconos PWA desde `public/favicon.svg` |
+| `pnpm test` | Ejecuta toda la suite (unit + e2e) |
+| `pnpm test:unit` | Tests unitarios con Vitest |
+| `pnpm test:e2e` | Tests end-to-end con Playwright |
+
+## ✅ Tests
+
+- **Unitarios (Vitest)** — stores de Pinia (`config`, `stats`, `game`) con el motor de audio simulado.
+- **End-to-end (Playwright)** — recorren una partida completa con **micrófono simulado** (flags `--use-fake-device-for-media-stream`), incluida la escucha limitada.
+
+```bash
+pnpm test              # unit + e2e
+pnpm test:unit         # solo unitarios
+pnpm test:e2e          # solo e2e
+pnpm exec playwright install chromium   # 1ª vez: instala el navegador
+```
+
+## 🚀 Despliegue
+
+El proyecto se despliega automáticamente en **GitHub Pages** con el workflow
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) al hacer push a `main`:
+
+1. **Test** — instala dependencias y ejecuta unit + e2e.
+2. **Build** — compila la PWA con `BASE_PATH=/Inversio/`.
+3. **Deploy** — publica `dist/` en GitHub Pages.
+
+**URL:** https://cuti27.github.io/Inversio/
+
+> Para activarlo la primera vez: **Settings → Pages → Source: GitHub Actions**.
 
 ## 📱 PWA e instalación
 
@@ -98,15 +127,15 @@ La app detecta automáticamente si está corriendo **instalada** o en la **web**
 - **iOS (Safari)** → muestra instrucciones manuales (*Compartir → Añadir a pantalla de inicio*).
 - Si ya está instalada, el botón **desaparece**.
 
-> Para probar la instalación usa `npm run build && npm run preview` (la instalación requiere
+> Para probar la instalación usa `pnpm build && pnpm preview` (la instalación requiere
 > el service worker, que no se activa en modo desarrollo).
 
 ## 🧪 Probar en el móvil
 
 El micrófono (`getUserMedia`) y los Service Workers exigen **contexto seguro (HTTPS)**. Opciones:
 
+- **Ya desplegado:** abre https://cuti27.github.io/Inversio/ en el móvil.
 - **Túnel local:** `cloudflared tunnel --url http://localhost:5173` (o ngrok) y abre la URL HTTPS en el móvil.
-- **Despliegue:** sube el proyecto a Vercel / Netlify.
 
 ## 📂 Estructura
 
@@ -127,6 +156,11 @@ src/
     └── screens/              # una pantalla por fase del juego
 scripts/
 └── gen-icons.mjs             # genera los PNG de la PWA desde favicon.svg
+tests/
+├── unit/                     # Vitest (stores)
+└── e2e/                      # Playwright (flujo completo)
+.github/
+└── workflows/ci.yml          # test → build → deploy a GitHub Pages
 ```
 
 ## 🔍 Notas técnicas
@@ -141,6 +175,7 @@ scripts/
 - [x] Flujo de juego completo (local, pass-and-play)
 - [x] PWA instalable + botón de instalación
 - [x] Estadísticas en `localStorage`
+- [x] Tests (Vitest + Playwright) y CI/CD en GitHub Pages
 - [ ] Multijugador **online** en tiempo real (varios dispositivos)
 - [ ] Exportar/compartir el clip final
 

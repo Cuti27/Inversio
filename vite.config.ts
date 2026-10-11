@@ -2,8 +2,13 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// En GitHub Pages la app se sirve en un subdirectorio (/Inversio/), así que el
+// workflow define BASE_PATH=/Inversio/. En local y en otros hostings, la raíz.
+const base = process.env.BASE_PATH ?? '/'
+
 // https://vite.dev/config/
 export default defineConfig({
+  base,
   plugins: [
     vue(),
     VitePWA({
@@ -22,8 +27,8 @@ export default defineConfig({
         background_color: '#0f0f1a',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
